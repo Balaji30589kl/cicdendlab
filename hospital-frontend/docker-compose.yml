@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  frontend:
+    image: balaji30589/hospital-frontend:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Optional build-time Vite envs; define in .env if needed
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-}
+    ports:
+      # Using 8081 on host to avoid Jenkins using 8080
+      - "8081:80"
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost/"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    # container_name: hospital-frontend
